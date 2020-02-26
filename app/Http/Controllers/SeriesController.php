@@ -14,29 +14,45 @@ class SeriesController extends Controller
     {
         $series = Serie::query()
             ->orderBy('nome')->get();
-        $mensagem= $request->session()->get('mensagem');
+        $mensagem = $request->session()->get('mensagem');
         //$request->session()->remove('mensagem');
 
-        return view('series.index', compact('series','mensagem'));
+        return view('series.index', compact('series', 'mensagem'));
     }
 
     public function create()
     {
         return view('series.create');
+
     }
 
     public function store(SeriesFormRequest $request)
     {
-        $request->validate();
-        $serie = Serie::create($request->all());
-        $request->session()->flash('mensagem' ,"Serie {$serie->id} criada com sucesso {$serie->nome}");
+        $serie = Serie::create(['nome' => $request->nome]);
+
+        $qtdTemporadas = $request->qtd_temporadas;
+
+        for ($i = 1; $i <= $qtdTemporadas; $i++) {
+            $temporada=$serie->temporadas()->create(['numero' => $i]);
+
+            for($j=1;j<=$request->ep_por_temporada;$j++)
+            {
+                $temporada->episodios()->create(['numero'=>$j]);
+            }
+        }
+
+
+        
+        $request->session()->flash('mensagem',
+            "Serie {$serie->id} criada com sucesso {$serie->nome} e temporadas e episodios");
+
         return redirect()->route('listar_series');
     }
 
     public function destroi(Request $request)
     {
         Serie::destroy($request->id);
-        $request->session()->flash('mensagem' ,"Serie removida com sucesso ");
+        $request->session()->flash('mensagem', "Serie removida com sucesso ");
         return redirect()->route('listar_series');
     }
 }
