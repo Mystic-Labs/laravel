@@ -19,7 +19,7 @@ class CreateTemporadasTable extends Migration
             $table->integer('serie_id');
             $table->foreign('serie_id')
                 ->references('id')
-                ->on('serie');
+                ->on('series');
 
 
         });

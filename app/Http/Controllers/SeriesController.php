@@ -32,17 +32,18 @@ class SeriesController extends Controller
 
         $qtdTemporadas = $request->qtd_temporadas;
 
-        for ($i = 1; $i <= $qtdTemporadas; $i++) {
-            $temporada=$serie->temporadas()->create(['numero' => $i]);
+        for ($i = 1; $i <= $qtdTemporadas; $i++)
+        {
+            $temporada = $serie->temporadas()->create(['numero' => $i]);
 
-            for($j=1;j<=$request->ep_por_temporada;$j++)
+            for ($j = 1; $j <= $request->ep_por_temporada; $j++)
             {
-                $temporada->episodios()->create(['numero'=>$j]);
+                $temporada->episodios()->create(['numero' => $j]);
             }
         }
 
 
-        
+
         $request->session()->flash('mensagem',
             "Serie {$serie->id} criada com sucesso {$serie->nome} e temporadas e episodios");
 
