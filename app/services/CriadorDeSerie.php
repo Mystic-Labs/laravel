@@ -5,6 +5,7 @@ namespace App\services;
 
 
 use App\Serie;
+use Illuminate\Support\Facades\DB;
 
 class CriadorDeSerie
 {
@@ -12,21 +13,42 @@ class CriadorDeSerie
         string $nomeSerie,
         int $qtdTemporadas,
         int $ep_por_temporada
-    ):Serie
+    ): Serie
     {
-        $serie = Serie::create(['nome' => $nomeSerie]);
 
-         for ($i = 1; $i <= $qtdTemporadas; $i++)
-        {
+        $serie = null;
+        DB::transaction(
+            function () use (&$serie, &$serieId, &$nomeSerie, &$qtdTemporadas, &$ep_por_temporada) {
+                $serie = Serie::create(['nome' => $nomeSerie]);
+                $this->criaTemporadas($qtdTemporadas, $serie, $ep_por_temporada);
+            }
+        );
+        return $serie;
+
+    }
+    /**
+     * @param int $qtdTemporadas
+     * @param $serie
+     * @param int $ep_por_temporada
+     */
+   private function criaTemporadas(int $qtdTemporadas, $serie, int $ep_por_temporada): void
+    {
+        for ($i = 1; $i <= $qtdTemporadas; $i++) {
             $temporada = $serie->temporadas()->create(['numero' => $i]);
 
-            for ($j = 1; $j <= $ep_por_temporada; $j++)
-            {
-                $temporada->episodios()->create(['numero' => $j]);
-            }
+            $this->criaEpisodios($ep_por_temporada, $temporada);
         }
-         return $serie;
+    }
 
+    /**
+     * @param int $ep_por_temporada
+     * @param $temporada
+     */
+    private function criaEpisodios(int $ep_por_temporada, $temporada): void
+    {
+        for ($j = 1; $j <= $ep_por_temporada; $j++) {
+            $temporada->episodios()->create(['numero' => $j]);
+        }
     }
 
 }
