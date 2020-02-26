@@ -15,23 +15,20 @@ class CriadorDeSerie
         int $ep_por_temporada
     ): Serie
     {
-
-        $serie = null;
-        DB::transaction(
-            function () use (&$serie, &$serieId, &$nomeSerie, &$qtdTemporadas, &$ep_por_temporada) {
-                $serie = Serie::create(['nome' => $nomeSerie]);
-                $this->criaTemporadas($qtdTemporadas, $serie, $ep_por_temporada);
-            }
-        );
+        DB::beginTransaction();
+        $serie = Serie::create(['nome' => $nomeSerie]);
+        $this->criaTemporadas($qtdTemporadas, $serie, $ep_por_temporada);
+        DB::commit();
         return $serie;
 
     }
+
     /**
      * @param int $qtdTemporadas
      * @param $serie
      * @param int $ep_por_temporada
      */
-   private function criaTemporadas(int $qtdTemporadas, $serie, int $ep_por_temporada): void
+    private function criaTemporadas(int $qtdTemporadas, $serie, int $ep_por_temporada): void
     {
         for ($i = 1; $i <= $qtdTemporadas; $i++) {
             $temporada = $serie->temporadas()->create(['numero' => $i]);
