@@ -3,6 +3,7 @@
     add series
 @endsection
 @section('conteudo')
+    @include('mensagem',['mensagem'=>$mensagem])
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
