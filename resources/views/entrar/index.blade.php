@@ -24,7 +24,7 @@
             Entrar
         </button>
 
-        <a href="#" class="btn btn-secondary mt-3">
+        <a href="/registrar" class="btn btn-secondary mt-3">
             Registrar-se
         </a>
     </form>
