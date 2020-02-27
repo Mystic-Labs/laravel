@@ -11,9 +11,15 @@ use App\services\CriadorDeSerie;
 use App\services\RemovedorDeSerie;
 use App\Temporada;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SeriesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index(Request $request)
     {
         $series = Serie::query()
